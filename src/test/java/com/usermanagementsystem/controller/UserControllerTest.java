@@ -82,6 +82,26 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("PATCH /api/users/{id}/status - Success")
+    void updateUserStatus_ok() throws Exception {
+
+        commonResponse.setStatus(UserStatus.INACTIVE);
+
+        when(userService.updateUserStatus(any(), any()))
+                .thenReturn(commonResponse);
+
+        mockMvc.perform(patch("/api/users/test-id-123/status")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                    {
+                      "status":"INACTIVE"
+                    }
+                    """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("INACTIVE"));
+    }
+
+    @Test
     @DisplayName("GET /api/users - Paginated Success")
     void getUsers_ok() throws Exception {
         PageImpl<UserResponse> pageResponse = new PageImpl<>(List.of(commonResponse));
